@@ -101,10 +101,10 @@ public:
 
     // Element-wise Division
     Matrix<T> elementDivide (const Matrix<T>& other) const {
-        if (rows != other.rows || cols != other.cols) throw std::invalid_argument("Matrix dimensions must match for element-wise multiplication");
+        if (rows != other.rows || cols != other.cols) throw std::invalid_argument("Matrix dimensions must match for element-wise division");
 
         Matrix<T> result(rows, cols);
-        for (int i = 0; i < rows * cols; ++i) result.data[i] = data[i] * other.data[i];
+        for (int i = 0; i < rows * cols; ++i) result.data[i] = data[i] / other.data[i];
         return result;
     }
 
@@ -112,7 +112,7 @@ public:
     Matrix<T> operator / (const T& scalar) const {
       Matrix<T> result(rows, cols);
       for(int i = 0; i < rows * cols; ++i)
-          result.data[i] = data[i] * scalar;
+          result.data[i] = data[i] / scalar;
       return result;
     }
 
