@@ -50,6 +50,26 @@ public:
         }
     }
 
+    // Kronecker Product
+    Matrix<T> kronecker(const Matrix<T>& other) const {
+        int totalRows = rows*other.getRows();
+        int totalCols = cols*other.getCols();
+
+        Matrix<T> result(totalRows, totalCols);
+        for (int i = 0; i < totalRows; ++i) {
+            for (int j = 0; j < totalCols; ++j) {
+                int selfRow = i / other.getRows();
+                int selfCol = j / other.getCols();
+                int otherRow = i % other.getRows();
+                int otherCol = j % other.getCols();
+                
+                result.data[i * totalCols + j] = data[selfRow * cols + selfCol] * other.data[otherRow * other.getCols() + otherCol];
+            }
+        }
+        
+        return result;
+    }
+
     // Matrix Addition
     Matrix<T> operator + (const Matrix<T>& other) const {
         if (rows != other.rows || cols != other.cols) throw std::invalid_argument("Matrix dimensions must match for addition");
