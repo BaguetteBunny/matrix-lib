@@ -50,6 +50,16 @@ public:
         }
     }
 
+    // Comparison
+    bool operator==(const Matrix<T>& other) const {
+        if (!isIdentical(other)) throw std::invalid_argument("Matrix dimensions must match for equal");
+        for (int i = 0; i < rows*cols; ++i) 
+            if (other.data[i] != data[i])
+                return false;
+
+        return true;
+    }
+
     // Kronecker Product
     Matrix<T> kronecker(const Matrix<T>& other) const {
         int totalRows = rows*other.getRows();
@@ -72,7 +82,7 @@ public:
 
     // Matrix Addition
     Matrix<T> operator + (const Matrix<T>& other) const {
-        if (isIdentical(other)) throw std::invalid_argument("Matrix dimensions must match for addition");
+        if (!isIdentical(other)) throw std::invalid_argument("Matrix dimensions must match for addition");
 
         Matrix<T> result(rows, cols);
         for (int i = 0; i < rows * cols; ++i) result.data[i] = data[i] + other.data[i];
@@ -88,7 +98,7 @@ public:
 
     // Matrix Substraction
     Matrix<T> operator - (const Matrix<T>& other) const {
-        if (isIdentical(other)) throw std::invalid_argument("Matrix dimensions must match for substraction");
+        if (!isIdentical(other)) throw std::invalid_argument("Matrix dimensions must match for substraction");
 
         Matrix<T> result(rows, cols);
         for (int i = 0; i < rows * cols; ++i) result.data[i] = data[i] - other.data[i];
@@ -104,7 +114,7 @@ public:
 
     // Element-wise Multiplication
     Matrix<T> elementMultiply (const Matrix<T>& other) const {
-        if (isIdentical(other)) throw std::invalid_argument("Matrix dimensions must match for element-wise multiplication");
+        if (!isIdentical(other)) throw std::invalid_argument("Matrix dimensions must match for element-wise multiplication");
 
         Matrix<T> result(rows, cols);
         for (int i = 0; i < rows * cols; ++i) result.data[i] = data[i] * other.data[i];
@@ -121,7 +131,7 @@ public:
 
     // Element-wise Division
     Matrix<T> elementDivide (const Matrix<T>& other) const {
-        if (isIdentical(other)) throw std::invalid_argument("Matrix dimensions must match for element-wise division");
+        if (!isIdentical(other)) throw std::invalid_argument("Matrix dimensions must match for element-wise division");
 
         Matrix<T> result(rows, cols);
         for (int i = 0; i < rows * cols; ++i) result.data[i] = data[i] / other.data[i];
