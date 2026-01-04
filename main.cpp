@@ -44,6 +44,7 @@ void unitTest() {
     // Matrix to Matrix Operations
     checklist.push_back((A + B) == Matrix<double>({{6, 8}, {10, 12}}));
     checklist.push_back((A - B) == Matrix<double>({{-4, -4}, {-4, -4}}));
+    checklist.push_back((A * B) == Matrix<double>({{19, 22}, {43, 50}}));
 
     checklist.push_back((A.kronecker(B)) == Matrix<double>({{5, 6, 10, 12}, {7, 8, 14, 16}, {15, 18, 20, 24}, {21, 24, 28, 32}}));
 

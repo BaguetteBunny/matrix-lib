@@ -12,6 +12,30 @@ private:
     int rows, cols;
     std::vector<T> data;
 
+    T det_compute(const Matrix<T>& self) const {
+        // Check if last step
+        std::vector<T> copy_data = self.data;
+        copy_data[0] = 0;
+        std::all_of(copy_data.begin(), copy_data.end(), [&self](int element) {
+            if (!element) return self.data[0];
+        });
+
+        Matrix<T> result(rows, cols);
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < cols; ++j) {
+                if (j < i) continue;
+                if (j > i) {
+                    int idx = i * cols + j;
+                    result.data[idx] = data[idx];
+                }
+                if (j == i) {
+                    continue;
+                }
+            }
+        }
+        return det_compute(*result);
+    }
+
 public:
     Matrix(int r, int c, T init = T()) : rows(r), cols(c), data(r * c, init) {}
 
@@ -80,6 +104,12 @@ public:
         return result;
     }
 
+    // Determinant
+    T det() const {
+        if (!isSquare()) throw std::invalid_argument("Matrix must be a square matrix.");
+        return det_compute(*this);
+    }
+
     // Matrix Addition
     Matrix<T> operator + (const Matrix<T>& other) const {
         if (!isIdentical(other)) throw std::invalid_argument("Matrix dimensions must match for addition");
@@ -110,6 +140,21 @@ public:
       Matrix<T> result(rows, cols);
       for (int i = 0; i < rows * cols; ++i) result.data[i] = data[i] - scalar;
       return result;
+    }
+
+    // Matrix Multiplication (NAIVE)
+    Matrix<T> operator * (const Matrix<T>& other) const {
+        if (!canMultiply(other)) throw std::invalid_argument("Invalid matrix multiplication dimensions.");
+
+        Matrix<T> result(rows, other.cols);
+        for (int i = 0; i < rows; ++i) {
+            for (int k = 0; k < cols; ++k) {
+                for (int j = 0; j < other.cols; ++j) {
+                    result.data[i * other.cols + j] += data[i * cols + k] * other.data[k * other.cols + j];
+                }
+            }
+        }
+        return result;
     }
 
     // Element-wise Multiplication
