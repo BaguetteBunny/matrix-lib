@@ -150,10 +150,33 @@ public:
     bool isSquare() const {return rows == cols && cols > 0;}
 
     bool isLowerTriangular() const {
-        for (int i = 1; i < (rows - 1) * (cols - 1); ++i) {
-            if (i % cols == 0) continue;
-            if (data[i] != 0 && (i)) return false;
+        if (!isSquare()) return false;
+        
+        for (int i = 0; i < rows; ++i) 
+            for (int j = i+1; j < cols; ++j) 
+                if (data[i * cols + j] != 0) return false;
+        
+        return true;
+    }
+    bool isUpperTriangular() const {
+        if (!isSquare()) return false;
+        
+        for (int i = 0; i < rows; ++i) 
+            for (int j = 0; j < i; ++j) 
+                if (data[i * cols + j] != 0) return false;
+        
+        return true;
+    }
+    bool isDiagonal() const {
+        if (!isSquare()) return false;
+        
+        for (int i = 0; i < rows; ++i) {
+            for (int j = i + 1; j < cols; ++j) {
+                if (data[i * cols + j] != 0) return false;
+                if (data[j * cols + i] != 0) return false;
+            }
         }
+        
         return true;
     }
 };
