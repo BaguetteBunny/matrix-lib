@@ -151,8 +151,8 @@ public:
     bool isNull() const {return std::all_of(data.begin(), data.end(), [](int element) {return !element;});}
     bool isSquare() const {return rows == cols && cols > 0;}
 
-    bool isIdentical(Matrix<T>& other) const {return rows == other.rows && cols == other.cols;}
-    bool canMultiply(Matrix<T>& other) const {return cols == other.rows;}
+    bool isIdentical(const Matrix<T>& other) const {return rows == other.rows && cols == other.cols;}
+    bool canMultiply(const Matrix<T>& other) const {return cols == other.rows;}
 
     bool isLowerTriangular() const {
         if (!isSquare()) return false;
