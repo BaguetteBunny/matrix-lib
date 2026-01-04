@@ -14,7 +14,8 @@ private:
     int rows, cols;
     std::vector<T> data;
 
-    T det_compute(const Matrix<T>& original_self, const Matrix<T>& self, int itr) const {
+    [[deprecated]] // Bird's Algorithm O(n^4)
+    T bird_det(const Matrix<T>& original_self, const Matrix<T>& self, int itr) const {
         // Recursion failsafe
         if (itr >= 20) throw std::invalid_argument("Recursion limit reached for det calculation (" + std::to_string(itr) + ")");
 
@@ -119,7 +120,6 @@ public:
     // Determinant
     T det() const {
         if (!isSquare()) throw std::invalid_argument("Matrix must be a square matrix.");
-        return det_compute(*this, *this, 0);
     }
 
     // Matrix Addition
