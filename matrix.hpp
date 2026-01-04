@@ -146,6 +146,7 @@ public:
       return result;
     }
 
+    bool isSingular() const {return cols == rows && rows == 1;}
     bool isRow() const {return cols > 0 && rows == 1;}
     bool isCol() const {return rows > 0 && cols == 1;}
     bool isNull() const {return std::all_of(data.begin(), data.end(), [](int element) {return !element;});}

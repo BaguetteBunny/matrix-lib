@@ -31,6 +31,7 @@ void unitTest() {
     Matrix<double> A({{1,2}, {3,4}});
     Matrix<double> B({{5,6}, {7,8}});
 
+    Matrix<double> SINGULAR(std::vector<std::vector<double>>{{1}});
     Matrix<double> ROW_MTX({{1,2,3}});
     Matrix<double> COL_MTX(std::vector<std::vector<double>>{{1}, {2}, {3}});
     Matrix<double> NULL_MTX({{0,0,0}, {0,0,0}, {0,0,0}});
@@ -57,6 +58,7 @@ void unitTest() {
     checklist.push_back((B.elementDivide(B)) == Matrix<double>({{1, 1}, {1, 1}}));
 
     // Checks
+    checklist.push_back(SINGULAR.isSingular());
     checklist.push_back(A.isSquare());
     checklist.push_back(ROW_MTX.isRow());
     checklist.push_back(COL_MTX.isCol());
