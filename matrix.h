@@ -176,7 +176,32 @@ public:
                 if (data[j * cols + i] != 0) return false;
             }
         }
+
+        return true;
+    }
+    bool isScalar() const {
+        if (!isSquare()) return false;
+        auto lambda = data[0];
         
+        for (int i = 0; i < rows; ++i) {
+            if (data[i * cols + i] != lambda) return false;
+            for (int j = i + 1; j < cols; ++j) {
+                if (data[i * cols + j] != 0) return false;
+                if (data[j * cols + i] != 0) return false;
+            }
+        }
+        return true;
+    }
+    bool isIdentity() const {
+        if (!isSquare()) return false;
+        
+        for (int i = 0; i < rows; ++i) {
+            if (data[i * cols + i] != 1) return false;
+            for (int j = i + 1; j < cols; ++j) {
+                if (data[i * cols + j] != 0) return false;
+                if (data[j * cols + i] != 0) return false;
+            }
+        }
         return true;
     }
 };
