@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <stdexcept>
 
 template<typename T>
@@ -11,6 +12,13 @@ class Matrix {
 private:
     int rows, cols;
     std::vector<T> data;
+
+    const bool isIdentical(Matrix<T>& other) const {
+        return rows == other.rows && cols == other.cols;
+    }
+    const bool canMultiply(Matrix<T>& other) const {
+        return cols == other.rows;
+    }
 
 public:
     Matrix(int r, int c, T init = T()) : rows(r), cols(c), data(r * c, init) {}
@@ -136,6 +144,18 @@ public:
       return result;
     }
 
+    bool isRow() const {return rows > 0 && !cols;}
+    bool isCol() const {return cols > 0 && !rows;}
+    bool isNull() const {return std::all_of(data.begin(), data.end(), [](int element) {return !element;});}
+    bool isSquare() const {return rows == cols && cols > 0;}
+
+    bool isLowerTriangular() const {
+        for (int i = 1; i < (rows - 1) * (cols - 1); ++i) {
+            if (i % cols == 0) continue;
+            if (data[i] != 0 && (i)) return false;
+        }
+        return true;
+    }
 };
 
 
