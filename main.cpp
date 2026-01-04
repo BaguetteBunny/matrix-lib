@@ -31,6 +31,14 @@ void unitTest() {
     Matrix<double> A({{1,2}, {3,4}});
     Matrix<double> B({{5,6}, {7,8}});
 
+    Matrix<double> A0({{-2,-4,-1}, {0,1,3}, {-2,3,1}});
+    Matrix<double> A1({{0, 3, 1},{0, 2, 1},{0, 2, 1}});
+    Matrix<double> A2({{0, 3, -1},{3, 0, -2},{-2, -3, 0}});
+    Matrix<double> A3({{3, 1, 0},{-2, 1, -2},{3, -1, -2}});
+    Matrix<double> A4({{2, 3, 3, 2},{-2, -2, 2, 0},{-3, -3, 1, 2},{-3, 3, -3, 0}});
+    Matrix<double> A5({{3, -2, 2, 0},{0, 2, -2, 2},{0, 2, -3, 0},{2, 0, 3, -2}});
+    Matrix<double> A6({{-3, -1, 0, 0},{-1, 2, 3, 2},{3, 0, -3, 0},{2, 0, 2, -3}});
+
     Matrix<double> SINGULAR(std::vector<std::vector<double>>{{1}});
     Matrix<double> ROW_MTX({{1,2,3}});
     Matrix<double> COL_MTX(std::vector<std::vector<double>>{{1}, {2}, {3}});
@@ -47,6 +55,15 @@ void unitTest() {
     checklist.push_back((A * B) == Matrix<double>({{19, 22}, {43, 50}}));
 
     checklist.push_back((A.kronecker(B)) == Matrix<double>({{5, 6, 10, 12}, {7, 8, 14, 16}, {15, 18, 20, 24}, {21, 24, 28, 32}}));
+
+    // Determinant & Inversion
+    checklist.push_back(A0.det() == 38);
+    checklist.push_back(A1.det() == 0);
+    checklist.push_back(A2.det() == 21);
+    checklist.push_back(A3.det() == -22);
+    checklist.push_back(A4.det() == 192);
+    checklist.push_back(A5.det() == 56);
+    checklist.push_back(A6.det() == -12);
 
     // Scalar Operations
     checklist.push_back((A + 2) == Matrix<double>({{3, 4}, {5, 6}}));

@@ -3,7 +3,9 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <string>
 #include <stdexcept>
+#include <unordered_map>
 
 template<typename T>
 
@@ -12,28 +14,38 @@ private:
     int rows, cols;
     std::vector<T> data;
 
-    T det_compute(const Matrix<T>& self) const {
+    T det_compute(const Matrix<T>& original_self, const Matrix<T>& self, int itr) const {
+        // Recursion failsafe
+        if (itr >= 20) throw std::invalid_argument("Recursion limit reached for det calculation (" + std::to_string(itr) + ")");
+
         // Check if last step
         std::vector<T> copy_data = self.data;
         copy_data[0] = 0;
-        std::all_of(copy_data.begin(), copy_data.end(), [&self](int element) {
-            if (!element) return self.data[0];
-        });
-
-        Matrix<T> result(rows, cols);
+        if (std::all_of(copy_data.begin(), copy_data.end(), [&self](int element) {return (!element);})) return self.data[0];
+        
+        // Compute mu(X)
+        Matrix<T> mu(rows, cols);
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < cols; ++j) {
                 if (j < i) continue;
                 if (j > i) {
                     int idx = i * cols + j;
-                    result.data[idx] = data[idx];
+                    mu.data[idx] = self.data[idx];
                 }
-                if (j == i) {
-                    continue;
+                if ((j == i) && (j != (cols-1))) {
+                    int static_idx = i * cols + j;
+                    for (int k = i+1; k < cols; ++k) {
+                        int idx = k * cols + k;
+                        mu.data[static_idx] += -self.data[idx];
+                    }
                 }
             }
         }
-        return det_compute(*result);
+
+        // Compute B = -mu(X) * A
+        Matrix<T> result = -mu * original_self;
+        ++itr;
+        return det_compute(original_self, result, itr);
     }
 
 public:
@@ -107,7 +119,7 @@ public:
     // Determinant
     T det() const {
         if (!isSquare()) throw std::invalid_argument("Matrix must be a square matrix.");
-        return det_compute(*this);
+        return det_compute(*this, *this, 0);
     }
 
     // Matrix Addition
@@ -124,6 +136,13 @@ public:
       Matrix<T> result(rows, cols);
       for (int i = 0; i < rows * cols; ++i) result.data[i] = data[i] + scalar;
       return result;
+    }
+
+    // Negative
+    Matrix<T> operator - () const {
+        Matrix<T> result(rows, cols);
+        for (int i = 0; i < rows * cols; ++i) result.data[i] = -data[i];
+        return result;
     }
 
     // Matrix Substraction
