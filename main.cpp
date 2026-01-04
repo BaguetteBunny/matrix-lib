@@ -32,7 +32,7 @@ void unitTest() {
     Matrix<double> B({{5,6}, {7,8}});
 
     Matrix<double> ROW_MTX({{1,2,3}});
-    Matrix<double> COL_MTX({{1}, {2}, {3}});
+    Matrix<double> COL_MTX(std::vector<std::vector<double>>{{1}, {2}, {3}});
     Matrix<double> NULL_MTX({{0,0,0}, {0,0,0}, {0,0,0}});
     Matrix<double> LOWER_TRIANGULAR({{1,0,0}, {3,4,0}, {3,4,3}});
     Matrix<double> UPPER_TRIANGULAR({{1,2,1}, {0,4,3}, {0,0,3}});
