@@ -1,6 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include <string>
+#include <typeinfo>
 #include "matrix.hpp"
 
 void benchmark(void (*func_ptr)()) {
@@ -38,6 +39,7 @@ void unitTest() {
     Matrix<double> A4({{2, 3, 3, 2},{-2, -2, 2, 0},{-3, -3, 1, 2},{-3, 3, -3, 0}});
     Matrix<double> A5({{3, -2, 2, 0},{0, 2, -2, 2},{0, 2, -3, 0},{2, 0, 3, -2}});
     Matrix<double> A6({{-3, -1, 0, 0},{-1, 2, 3, 2},{3, 0, -3, 0},{2, 0, 2, -3}});
+    Matrix<double> B1({{0, 1},{1, 2}});
 
     Matrix<double> SINGULAR(std::vector<std::vector<double>>{{1}});
     Matrix<double> ROW_MTX({{1,2,3}});
@@ -59,12 +61,12 @@ void unitTest() {
     // Determinant & Inversion
     checklist.push_back(A0.det() == 38);
     checklist.push_back(A1.det() == 0);
-    checklist.push_back(A2.det() == 21);
+    checklist.push_back(A2.intDet() == 21);
     checklist.push_back(A3.det() == -22);
     checklist.push_back(A4.det() == 192);
-    checklist.push_back(A5.det() == 56);
-    checklist.push_back(A6.det() == -12);
-
+    checklist.push_back(A5.intDet() == 56);
+    checklist.push_back(A6.intDet() == -12);
+    
     // Scalar Operations
     checklist.push_back((A + 2) == Matrix<double>({{3, 4}, {5, 6}}));
     checklist.push_back((A - 2) == Matrix<double>({{-1, 0}, {1, 2}}));

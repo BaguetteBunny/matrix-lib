@@ -6,6 +6,7 @@
 #include <string>
 #include <stdexcept>
 #include <unordered_map>
+#include <cmath>
 
 template<typename T>
 
@@ -27,6 +28,17 @@ public:
                 throw std::invalid_argument("All rows must have the same number of columns");
             data.insert(data.end(), row.begin(), row.end());
         }
+    }
+
+    static Matrix<T> identity(int n) {
+        Matrix<T> I(n, n);
+        for (int i = 0; i < n; ++i) I(i, i) = 1;
+        return I;
+    }
+
+    void swapRows(int r1, int r2, int start, int end) {
+        for (int j = start; j < end; ++j)
+            std::swap((*this)(r1,j), (*this)(r2,j));
     }
 
     // Add to idx
@@ -84,18 +96,27 @@ public:
 
     // Determinant
     T det() const {
-        Matrix<T> U = LU().back();
+        try {
+            auto [L,U,P,swaps] = LUP();
 
-        T total = 1;
-        for (int i = 0; i < rows; ++i) { total *= U(i, i); }
-        return total;
+            T total = 1;
+            for (int i = 0; i < rows; ++i)
+                total *= U(i,i);
+
+            if (swaps % 2) total = -total;
+
+            return total;
+        } catch (const std::invalid_argument&) { return T(0); }
     }
 
-    std::vector<Matrix<T>> LU() const {
+    int intDet(double eps = 1e-9) {
+        return static_cast<int>(std::round(det()));
+    }
+
+    std::tuple<Matrix<T>, Matrix<T>> LU() const {
         if (!isSquare()) throw std::invalid_argument("Matrix must be a square matrix.");
         Matrix<T> U(rows, cols);
-        Matrix<T> L(rows, cols);
-        for (int x = 0; x < rows; ++x) { L(x, x) = 1; }
+        Matrix<T> L = Matrix<T>::identity(rows);
 
         for (int i = 0; i < rows; ++i) {
             for (int j = i; j < rows; ++j) {
@@ -112,6 +133,45 @@ public:
         }
 
         return {L, U};
+    }
+
+    std::tuple<Matrix<T>, Matrix<T>, Matrix<T>, int> LUP() const {
+        if (!isSquare()) throw std::invalid_argument("Matrix must be square.");
+        Matrix<T> L(rows, cols);
+        Matrix<T> U = *this;
+        Matrix<T> P = Matrix<T>::identity(rows);
+
+        int swaps = 0;
+        for (int i = 0; i < rows; ++i) {
+            int pivot = i;
+            T maxVal = std::abs(U(i,i));
+
+            for (int r = i+1; r < rows; ++r) {
+                if (std::abs(U(r,i)) > maxVal) {
+                    maxVal = std::abs(U(r,i));
+                    pivot = r;
+                }
+            }
+
+            if (maxVal == 0) throw std::invalid_argument("Matrix must be invertible.");
+
+            if (pivot != i) {
+                U.swapRows(i, pivot, 0, U.getCols());
+                P.swapRows(i, pivot, 0, P.getCols());
+                L.swapRows(i, pivot, 0, i);
+                swaps++;
+            }
+
+            for (int j = i+1; j < rows; ++j) {
+                L(j,i) = U(j,i) / U(i,i);
+                for (int k = i; k < rows; ++k) 
+                    U(j,k) -= L(j,i) * U(i,k);
+            }
+        }
+
+        for (int i = 0; i < rows; ++i) L(i,i) = 1;
+
+        return {L,U,P,swaps};
     }
 
     // Matrix Addition
