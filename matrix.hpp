@@ -14,41 +14,6 @@ private:
     int rows, cols;
     std::vector<T> data;
 
-    [[deprecated]] // Bird's Algorithm O(n^4)
-    T bird_det(const Matrix<T>& original_self, const Matrix<T>& self, int itr) const {
-        // Recursion failsafe
-        if (itr >= 20) throw std::invalid_argument("Recursion limit reached for det calculation (" + std::to_string(itr) + ")");
-
-        // Check if last step
-        std::vector<T> copy_data = self.data;
-        copy_data[0] = 0;
-        if (std::all_of(copy_data.begin(), copy_data.end(), [&self](int element) {return (!element);})) return self.data[0];
-        
-        // Compute mu(X)
-        Matrix<T> mu(rows, cols);
-        for (int i = 0; i < rows; ++i) {
-            for (int j = 0; j < cols; ++j) {
-                if (j < i) continue;
-                if (j > i) {
-                    int idx = i * cols + j;
-                    mu.data[idx] = self.data[idx];
-                }
-                if ((j == i) && (j != (cols-1))) {
-                    int static_idx = i * cols + j;
-                    for (int k = i+1; k < cols; ++k) {
-                        int idx = k * cols + k;
-                        mu.data[static_idx] += -self.data[idx];
-                    }
-                }
-            }
-        }
-
-        // Compute B = -mu(X) * A
-        Matrix<T> result = -mu * original_self;
-        ++itr;
-        return det_compute(original_self, result, itr);
-    }
-
 public:
     Matrix(int r, int c, T init = T()) : rows(r), cols(c), data(r * c, init) {}
 
@@ -119,7 +84,34 @@ public:
 
     // Determinant
     T det() const {
+        Matrix<T> U = LU().back();
+
+        T total = 1;
+        for (int i = 0; i < rows; ++i) { total *= U(i, i); }
+        return total;
+    }
+
+    std::vector<Matrix<T>> LU() const {
         if (!isSquare()) throw std::invalid_argument("Matrix must be a square matrix.");
+        Matrix<T> U(rows, cols);
+        Matrix<T> L(rows, cols);
+        for (int x = 0; x < rows; ++x) { L(x, x) = 1; }
+
+        for (int i = 0; i < rows; ++i) {
+            for (int j = i; j < rows; ++j) {
+                T sum = 0;
+                for (int k = 0; k < i; ++k) { sum += L(i, k) * U(k, j); }
+                U(i, j) = data[rows * i + j] - sum;
+            }
+            
+            for (int j = i+1; j < rows; ++j) {
+                T sum = 0;
+                for (int k = 0; k < i; ++k) { sum += L(j, k) * U(k, i); }
+                L(j, i) = (data[rows * j + i] - sum) / U(i, i);
+            }
+        }
+
+        return {L, U};
     }
 
     // Matrix Addition
