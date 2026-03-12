@@ -109,10 +109,6 @@ public:
         } catch (const std::invalid_argument&) { return T(0); }
     }
 
-    int intDet(double eps = 1e-9) {
-        return static_cast<int>(std::round(det()));
-    }
-
     std::tuple<Matrix<T>, Matrix<T>> LU() const {
         if (!isSquare()) throw std::invalid_argument("Matrix must be a square matrix.");
         Matrix<T> U(rows, cols);
