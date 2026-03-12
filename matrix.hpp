@@ -96,6 +96,11 @@ public:
 
     // Determinant
     T det() const {
+        if (!isSquare()) throw std::invalid_argument("Matrix must be square.");
+        else if (isSingular()) return data[0];
+        else if (rows == 2) return data[0]*data[3] - data[1]*data[2];
+        else if (rows == 3) return data[0] * (data[4]*data[8] - data[5]*data[7]) - data[1] * (data[3]*data[8] - data[5]*data[6]) + data[2] * (data[3]*data[7] - data[4]*data[6]);
+
         try {
             auto [L,U,P,swaps] = LUP();
 
