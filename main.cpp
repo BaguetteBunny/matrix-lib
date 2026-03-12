@@ -55,6 +55,9 @@ void unitTest() {
     // Determinant & Inversion
     checklist.push_back(A0.det() == 38);
     checklist.push_back(A1.det() == 0);
+
+    // Transpose
+    checklist.push_back(A.transpose() == Matrix<double>({{1,3}, {2,4}}));
     
     // Scalar Operations
     checklist.push_back((A + 2) == Matrix<double>({{3, 4}, {5, 6}}));
@@ -82,7 +85,7 @@ void unitTest() {
         int idx = std::distance(checklist.begin(), i); 
         if (!checklist[idx]) throw std::invalid_argument("Error at index " + std::to_string(idx));
     }
-    
+
     std::cout << "All checks are successful.";
 
 }

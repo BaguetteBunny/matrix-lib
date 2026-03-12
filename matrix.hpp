@@ -114,6 +114,16 @@ public:
         } catch (const std::invalid_argument&) { return T(0); }
     }
 
+    Matrix<T> transpose() const {
+        Matrix<T> result(cols, rows);
+        
+        for (int i = 0; i < rows; ++i)
+            for (int j = 0; j < cols; ++j)
+                result.data[cols * j + i] = data[cols * i + j];
+
+        return result;
+    }
+
     std::tuple<Matrix<T>, Matrix<T>> LU() const {
         if (!isSquare()) throw std::invalid_argument("Matrix must be a square matrix.");
         Matrix<T> U(rows, cols);
