@@ -7,8 +7,12 @@
 #include <stdexcept>
 #include <unordered_map>
 #include <cmath>
+#include <cstdint>
+#include <omp.h>
 
 template<typename T>
+
+#define BS 64
 
 class Matrix {
 private:
@@ -235,16 +239,34 @@ public:
       return result;
     }
 
-    // Matrix Multiplication (NAIVE)
-    Matrix<T> operator * (const Matrix<T>& other) const {
+    // Matrix Multiplication
+    Matrix<T> operator*(const Matrix<T>& other) const {
         if (!canMultiply(other)) throw std::invalid_argument("Invalid matrix multiplication dimensions.");
 
         Matrix<T> result(rows, other.cols);
+
+        const size_t M = rows;
+        const size_t K = cols;
+        const size_t N = other.cols;
+
+        const T* __restrict A = data.data();
+        const T* __restrict B = other.data.data();
+        T* __restrict C = result.data.data();
         
-        for (int i = 0; i < rows; ++i) {
-            for (int k = 0; k < cols; ++k) {
-                for (int j = 0; j < other.cols; ++j) {
-                    result.data[i * other.cols + j] += data[i * cols + k] * other.data[k * other.cols + j];
+        #pragma omp parallel for
+        for (size_t ii = 0; ii < M; ii += BS) {
+            const size_t iMax = std::min(ii + BS, M);
+            for (size_t kk = 0; kk < K; kk += BS) {
+                const size_t kMax = std::min(kk + BS, K);
+                for (size_t jj = 0; jj < N; jj += BS) {
+                    const size_t jMax = std::min(jj + BS, N);
+                    for (size_t i = ii; i < iMax; ++i) {
+                        for (size_t k = kk; k < kMax; ++k) {
+                            const T aik = A[i * K + k];
+                            for (size_t j = jj; j < jMax; ++j)
+                                C[i * N + j] += aik * B[k * N + j];
+                        }
+                    }
                 }
             }
         }
