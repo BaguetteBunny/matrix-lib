@@ -30,6 +30,17 @@ public:
         }
     }
 
+    friend std::ostream& operator<<(std::ostream& os, const Matrix& obj) {
+        for (size_t i = 0; i < obj.rows; i++) {
+            for (size_t j = 0; j < obj.cols; j++) {
+                os << obj.data[i * obj.cols + j];
+                if (j + 1 < obj.cols) os << ' ';
+            }
+            os << '\n';
+        }
+        return os;
+    }
+
     static Matrix<T> identity(int n) {
         Matrix<T> I(n, n);
         for (int i = 0; i < n; ++i) I(i, i) = 1;
@@ -229,6 +240,7 @@ public:
         if (!canMultiply(other)) throw std::invalid_argument("Invalid matrix multiplication dimensions.");
 
         Matrix<T> result(rows, other.cols);
+        
         for (int i = 0; i < rows; ++i) {
             for (int k = 0; k < cols; ++k) {
                 for (int j = 0; j < other.cols; ++j) {
