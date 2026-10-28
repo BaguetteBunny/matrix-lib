@@ -31,19 +31,13 @@ void benchmark(void (*func_ptr)()) {
 }
 
 void matMultTime() {
-    size_t N = 100;
+    size_t N = 5'000;
     std::mt19937 seed(42);
 
     Matrix<double> A = createLargeMatrix(N, seed);
     Matrix<double> B = createLargeMatrix(N, seed);
 
-    volatile double sink = (A * B)(0, 0);
-
-    #pragma omp parallel for
-    for (int i = 0; i < 20'000; i++) {
-        Matrix<double> C = A*B;
-        sink = C(0, 0);
-    }
+    Matrix<double> C = A*B;
 }
 
 int main() {
